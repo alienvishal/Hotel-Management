@@ -7,21 +7,6 @@ public class ReservationBean {
 	Date checkin, checkout;
 	int id;
 	
-	public ReservationBean(String room_type, Date checkin, Date checkout, int id) {
-		super();
-		this.room_type = room_type;
-		this.checkin = checkin;
-		this.checkout = checkout;
-		this.id = id;
-	}
-	
-	public ReservationBean(String room_type, Date checkin, Date checkout) {
-		super();
-		this.room_type = room_type;
-		this.checkin = checkin;
-		this.checkout = checkout;
-	}
-	
 	public String getRoom_type() {
 		return room_type;
 	}

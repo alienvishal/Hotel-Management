@@ -16,14 +16,10 @@ import com.mvc.bean.UserBean;
 public class UserDBUtil {
 
 	private DataSource dataSource;
-	EncryptionDecryption encrypt;
-	UserBean user;
 	
 	public UserDBUtil(DataSource dataSource) {
 		super();
 		this.dataSource = dataSource;
-		encrypt = new EncryptionDecryption();
-		user = new UserBean();
 	}
 
 	public boolean insertData(UserBean maintainQuery) throws SQLException {
@@ -96,6 +92,8 @@ public class UserDBUtil {
 
 	public List<UserBean> login_user(String email, String password) throws Exception {
 		
+		EncryptionDecryption encrypt = new EncryptionDecryption();
+		UserBean user = new UserBean();
 		List<UserBean> list = new ArrayList<UserBean>();
 		Connection myConn = null;
 		PreparedStatement stmt = null;
@@ -111,6 +109,7 @@ public class UserDBUtil {
 			rs = stmt.executeQuery();
 			
 			if(rs.next()) {
+				int id = rs.getInt("id");
 				String firstname = rs.getString("firstname");
 				String lastname = rs.getString("lastname");
 				String EncryptPassword = rs.getString("password");
@@ -118,6 +117,7 @@ public class UserDBUtil {
 				if( encrypt.decrypt(EncryptPassword).equals(password) ) {
 					user.setFirstName(firstname);
 					user.setLastName(lastname);
+					user.setId(id);
 					list.add(user);
 				}
 				
@@ -132,20 +132,22 @@ public class UserDBUtil {
 		
 	}
 
-	public boolean hotel_reservation(ReservationBean hotelReservation) throws SQLException {
+	public boolean hotel_reservation(int reg_id) throws SQLException {
 		
+		ReservationBean hotelReservation = new ReservationBean();
 		Connection myConn = null;
 		PreparedStatement stmt = null;
 		boolean result = false;
 		
 		try {
 			myConn = dataSource.getConnection();
-			String sql = "INSERT INTO reservation(room_type, id, checkin, checkout) VALUES (?,?,?,?)";
+			String sql = "INSERT INTO reservation(room_type, checkin, checkout, reg_id) VALUES (?,?,?,?)";
 			stmt = myConn.prepareStatement(sql);
 			
 			stmt.setString(1, hotelReservation.getRoom_type());
 			stmt.setDate(2, hotelReservation.getCheckin());
 			stmt.setDate(3, hotelReservation.getCheckout());
+			stmt.setInt(4, reg_id);
 			
 			result = stmt.execute();
 			
